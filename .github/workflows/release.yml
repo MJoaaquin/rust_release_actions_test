@@ -17,6 +17,7 @@ jobs:
         with:
           version_regex: v.*
           release_title: "2023-01-05"
+          changelog_file: CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -30,6 +31,13 @@ jobs:
             os: macos-latest
     runs-on: ${{ matrix.os }}
     steps:
+      - name: Wait for the release to be created
+        uses: lewagon/wait-on-check-action@v1.2.0
+        with:
+          ref: ${{ github.ref }}
+          check-name: 'Create GitHub release'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 10
       - uses: actions/checkout@v3
       - uses: taiki-e/upload-rust-binary-action@v1
         with:
