@@ -16,6 +16,7 @@ jobs:
         uses: Roang-zero1/github-create-release-action@v3
         with:
           version_regex: v.*
+          release_title: "2023-01-05"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
