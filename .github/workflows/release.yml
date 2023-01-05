@@ -12,14 +12,12 @@ jobs:
   create-release:
     runs-on: ubuntu-latest
     steps:
-      - name: Create GitHub release
-        uses: Roang-zero1/github-create-release-action@v3
+      - uses: actions/checkout@v3
+      - uses: taiki-e/create-gh-release-action@v1
         with:
-          version_regex: v.*
-          release_title: "2023-01-05"
-          changelog_file: CHANGELOG.md
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          changelog: CHANGELOG.md
+          # (required) GitHub token for creating GitHub Releases.
+          token: ${{ secrets.GITHUB_TOKEN }}
 
   upload-assets:
     strategy:
@@ -31,15 +29,8 @@ jobs:
             os: macos-latest
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Wait for the release to be created
-        uses: lewagon/wait-on-check-action@v1.2.0
-        with:
-          ref: ${{ github.ref }}
-          check-name: 'Create GitHub release'
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          wait-interval: 10
       - uses: actions/checkout@v3
-      - uses: taiki-e/upload-rust-binary-action@v1
+      - uses: MJoaaquin/create-gh-release-action
         with:
           # (required) Comma-separated list of binary names (non-extension portion of filename) to build and upload.
           # Note that glob pattern is not supported yet.
