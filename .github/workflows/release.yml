@@ -6,7 +6,7 @@ permissions:
 on:
   push:
     tags:
-      - v\d+\.\d+\.\d+(\-(alpha|beta)\.(\d\d\d\d-\d\d-\d\d))?$
+      - "v*.*.*-(alpha|beta).\d{4}-\d{2}-\d{2}"
 
 jobs:
   create-release:
