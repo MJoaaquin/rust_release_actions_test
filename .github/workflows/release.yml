@@ -6,7 +6,7 @@ permissions:
 on:
   push:
     tags:
-      - "v\d+.\d+.\d+((-alpha|-beta).\d{4}-\d{2}-\d{2})?"
+      - "v[0-1]+.[0-1]+.[0-1]+?-alpha?-beta?[0-1][0-1][0-1][0-1]-[0-1][0-1]-[0-1][0-1]"
 jobs:
   create-release:
     runs-on: ubuntu-latest
