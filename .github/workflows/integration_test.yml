@@ -1,11 +1,11 @@
 name: pull request comment
 on:
   issue_comment:                                     
-    types: [created, edited, deleted]
+    types: created
 
 jobs:
   check:
-  runs-on: [ubuntu-latest]
+  runs-on: ubuntu-latest
   if: contains(github.event.comment.html_url, '/pull/')    # check if the comments come from pull request, exclude those from issue.
   
   steps:
