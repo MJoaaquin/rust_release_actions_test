@@ -5,10 +5,9 @@ on:
 
 jobs:
   check:
-  runs-on: ubuntu-latest
-  if: contains(github.event.comment.html_url, '/pull/')    # check if the comments come from pull request, exclude those from issue.
-  
-  steps:
-    - name: test
-      if: contains(github.event.comment.body, '/test')  # check the comment if it contains the keywords
-      run: "echo test"
+    if: contains(github.event.comment.html_url, '/pull/')    # check if the comments come from pull request, exclude those from issue.
+    runs-on: ubuntu-latest
+    steps:
+      - name: test
+        if: contains(github.event.comment.body, '/test')  # check the comment if it contains the keywords
+        run: "echo test"
