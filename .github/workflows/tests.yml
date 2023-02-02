@@ -32,4 +32,4 @@ jobs:
           rust-version: stable
 
       - name: Run tests
-        run: cargo test --test test_ignorados -- --ignored
+        run: cargo test
