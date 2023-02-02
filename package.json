@@ -1,0 +1,25 @@
+{
+  "name": "rust_release_action_test",
+  "version": "1.0.0",
+  "description": "testing this [action](https://github.com/taiki-e/upload-rust-binary-action) that creates a release, compiles the code and uploads the assets to the created release",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MJoaaquin/rust_release_actions_test.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MJoaaquin/rust_release_actions_test/issues"
+  },
+  "homepage": "https://github.com/MJoaaquin/rust_release_actions_test#readme",
+  "devDependencies": {
+    "hardhat": "^2.12.6"
+  }
+}

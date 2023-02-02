@@ -11,7 +11,13 @@ mod tests {
 
     #[test]
     #[ignore]
-    fn expensive_test() {
-        println!("EXPENSIVEE!")
+    fn expensive_test_01() {
+        println!("EXPENSIVEE 1!")
+    }
+
+    #[test]
+    #[ignore]
+    fn expensive_test_02() {
+        println!("EXPENSIVEE 2!")
     }
 }
