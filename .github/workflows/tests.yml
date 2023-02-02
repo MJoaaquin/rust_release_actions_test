@@ -4,18 +4,32 @@ on: issue_comment
 
 jobs:
   pr_commented:
-    # This job only runs for pull request comments
     name: PR comment
-    if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, '/test') }}
+    if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, 'Run Integration Tests') }}
     runs-on: ubuntu-latest
     steps:
       - name: Setup | Checkout
         uses: actions/checkout@v2
         with:
-          ref: ${{ github.ref }}
+          ref: ${{ github.event.pull_request.head.ref }}
+      
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 7.22.0
+      
+      - name: Install pnpm dependencies
+        run: pnpm install
+    
+      - name: Build contracts
+        run: "pnpm hardhat compile"
+      
+      - name: Run node
+        run: "pnpm hardhat node"
+
       - name: Setup | Rust
         uses: ATiltedTree/setup-rust@v1
         with:
           rust-version: stable
+
       - name: Run tests
-        run: cargo test -- --ignored
+        run: cargo test --test test_ignorados -- --ignored
