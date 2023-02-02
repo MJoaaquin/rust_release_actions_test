@@ -11,6 +11,8 @@ jobs:
     steps:
       - name: Setup | Checkout
         uses: actions/checkout@v2
+        with:
+          ref: ${{ github.ref }}
       - name: Setup | Rust
         uses: ATiltedTree/setup-rust@v1
         with:
