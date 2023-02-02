@@ -3,8 +3,8 @@ name: Integration Tests
 on: issue_comment
 
 jobs:
-  hardhat:
-    name: Hardhat Node
+  pr_commented:
+    name: PR comment
     if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, 'Run Integration Tests') }}
     runs-on: ubuntu-latest
     steps:
@@ -24,17 +24,7 @@ jobs:
         run: "pnpm hardhat compile"
       
       - name: Run node
-        run: "pnpm hardhat node"
-
-  pr_commented:
-    name: PR comment
-    if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, 'Run Integration Tests') }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Setup | Checkout
-        uses: actions/checkout@v2
-        with:
-          ref: ${{ github.event.pull_request.head.ref }}
+        run: "pnpm hardhat node &"
 
       - name: Setup | Rust
         uses: ATiltedTree/setup-rust@v1
@@ -42,4 +32,4 @@ jobs:
           rust-version: stable
 
       - name: Run tests
-        run: cargo test
+        run: cargo test --test test_ignorados -- --ignored
