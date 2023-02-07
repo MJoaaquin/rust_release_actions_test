@@ -12,6 +12,9 @@ jobs:
         uses: actions/checkout@v2
         with:
           ref: ${{ github.event.pull_request.base.ref }}
+          
+      - name: BRANCH NAME
+        run: echo "$GITHUB_REF"
       
       - uses: pnpm/action-setup@v2
         with:
