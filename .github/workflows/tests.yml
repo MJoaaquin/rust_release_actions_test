@@ -8,6 +8,32 @@ jobs:
     if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, 'Run Integration Tests') }}
     runs-on: ubuntu-latest
     steps:
+      - name: Notify that action is running
+        run: |
+          #!/bin/bash
+          
+          # Get the pull request number
+          pull_request_number=$(jq '.pull_request.number' "$GITHUB_EVENT_PATH")
+          
+          # Get the repository name and owner
+          repo=$(jq '.repository.name' "$GITHUB_EVENT_PATH")
+          owner=$(jq '.repository.owner.login' "$GITHUB_EVENT_PATH")
+          
+          workflow_run_url="https://github.com/$owner/$repo/actions/runs/$run_id"
+          
+          # Define the comment
+          comment="This is a comment added by a Github Action. You can see the action run at $workflow_run_url."
+          
+          # Encode the comment as a JSON string
+          json_string=$(echo "{\"body\":\"$comment\"}" | jq -c '.')
+          
+          # Add the comment to the pull request
+          curl -X POST \
+               -H "Authorization: token $GITHUB_TOKEN" \
+               -H "Content-Type: application/json" \
+               -d "$json_string" \
+               "https://api.github.com/repos/$owner/$repo/issues/$pull_request_number
+    
       - name: Obtain branch name
         id: obtain-branch-name
         run: |
