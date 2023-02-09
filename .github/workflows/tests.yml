@@ -54,3 +54,13 @@ jobs:
 
       - name: Run tests
         run: cargo test
+      
+      - name: Update pull request status
+        uses: sumitkm/update-pull-request-status-action@v0.3.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          state: success
+          context: Integration Tests
+          description: All integration tests passed
+          target_url: ${{ steps.obtain-branch-name.outputs.branch_name }}
+
