@@ -31,7 +31,7 @@ jobs:
           ref: ${{ steps.obtain-branch-name.outputs.branch_name }}
             
       - name: Print the branch name
-        run: echo "${{ github.event.issue.pull_request.head.ref }}"
+        run: echo "${{ steps.obtain-branch-name.outputs.branch_name }}"
       
       - uses: pnpm/action-setup@v2
         with:
