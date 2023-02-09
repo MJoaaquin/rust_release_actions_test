@@ -3,15 +3,36 @@ name: Integration Tests
 on: issue_comment
 
 jobs:
-  hardhat:
-    name: Hardhat Node
+  pr_commented:
+    name: PR comment
     if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, 'Run Integration Tests') }}
     runs-on: ubuntu-latest
     steps:
+      - name: Obtain branch name
+        id: obtain-branch-name
+        run: |
+          echo "Obtaining branch name from pull request URL..."
+
+          # Extract the pull request URL from the event information
+          pull_request_url=${{ github.event.issue.pull_request.url }}
+
+          # Make an API request to the pull request URL
+          response=$(curl -s $pull_request_url)
+
+          # Extract the branch name from the API response
+          branch_name=$(echo $response | jq -r '.head.ref')
+
+          echo "::set-output name=branch_name::$branch_name"
+
+
+    
       - name: Setup | Checkout
         uses: actions/checkout@v2
         with:
-          ref: ${{ github.event.pull_request.head.ref }}
+          ref: ${{ steps.obtain-branch-name.outputs.branch_name }}
+            
+      - name: Print the branch name
+        run: echo "${{ steps.obtain-branch-name.outputs.branch_name }}"
       
       - uses: pnpm/action-setup@v2
         with:
@@ -24,17 +45,7 @@ jobs:
         run: "pnpm hardhat compile"
       
       - name: Run node
-        run: "pnpm hardhat node"
-
-  pr_commented:
-    name: PR comment
-    if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, 'Run Integration Tests') }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Setup | Checkout
-        uses: actions/checkout@v2
-        with:
-          ref: ${{ github.event.pull_request.head.ref }}
+        run: "pnpm hardhat node &"
 
       - name: Setup | Rust
         uses: ATiltedTree/setup-rust@v1
@@ -43,3 +54,14 @@ jobs:
 
       - name: Run tests
         run: cargo test
+      
+      - name: Update pull request check
+        uses: gr2m/create-or-update-pull-request-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          pull_request_url: ${{ github.event.issue.pull_request.url }}
+          state: success
+          conclusion: success
+
+
