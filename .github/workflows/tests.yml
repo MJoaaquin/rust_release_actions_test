@@ -22,7 +22,8 @@ jobs:
           # Extract the branch name from the API response
           branch_name=$(echo $response | jq -r '.head.ref')
 
-          echo "Branch name: $branch_name"
+          echo "::set-output name=branch_name::$branch_name"
+
 
     
       - name: Setup | Checkout
