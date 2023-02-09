@@ -21,8 +21,14 @@ jobs:
 
           # Extract the branch name from the API response
           branch_name=$(echo $response | jq -r '.head.ref')
+          owner=$(echo $response | jq -r '.user.login')
+          repo=$(echo $response | jq -r '.head.repo.name')
+          sha=$(echo $response | jq -r '.head.sha')
 
           echo "::set-output name=branch_name::$branch_name"
+          echo "::set-output name=owner::$owner"
+          echo "::set-output name=repo::$repo"
+          echo "::set-output name=sha::$sha"
 
 
     
@@ -55,13 +61,16 @@ jobs:
       - name: Run tests
         run: cargo test
       
-      - name: Update pull request check
-        uses: gr2m/create-or-update-pull-request-action@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          pull_request_url: ${{ github.event.issue.pull_request.url }}
-          state: success
-          conclusion: success
+      - name: Create a commit status
+        run: |
+          url=https://api.github.com/repos/${{ steps.obtain-branch-name.outputs.owner }}/${{ steps.obtain-branch-name.outputs.repo }}/statuses/${{ steps.obtain-branch-name.outputs.sha }} \
+          response=$(curl \
+            -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}"\
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            $url \
+            -d '{"state":"success"}')
+          echo "$response"
 
 
