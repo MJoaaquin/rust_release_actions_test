@@ -8,6 +8,22 @@ jobs:
     if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, 'Run Integration Tests') }}
     runs-on: ubuntu-latest
     steps:
+      - name: Obtain branch name
+        id: obtain-branch-name
+        run: |
+          echo "Obtaining branch name from pull request URL..."
+
+          # Extract the pull request URL from the event information
+          pull_request_url=$(jq -r '.pull_request.url' "$GITHUB_EVENT_PATH")
+
+          # Make an API request to the pull request URL
+          response=$(curl -s $pull_request_url)
+
+          # Extract the branch name from the API response
+          branch_name=$(echo $response | jq -r '.head.ref')
+
+          echo "Branch name: $branch_name"
+    
       - name: Setup | Checkout
         uses: actions/checkout@v2
         with:
