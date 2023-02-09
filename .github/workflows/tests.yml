@@ -55,12 +55,13 @@ jobs:
       - name: Run tests
         run: cargo test
       
-      - name: Update pull request status
-        uses: sumitkm/update-pull-request-status-action@v0.3.0
+      - name: Update pull request check
+        uses: gr2m/create-or-update-pull-request-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          pull_request_url: ${{ github.event.issue.pull_request.url }}
           state: success
-          context: Integration Tests
-          description: All integration tests passed
-          target_url: ${{ github.event.issue.pull_request.url }}
+          conclusion: success
+
 
