@@ -62,5 +62,5 @@ jobs:
           state: success
           context: Integration Tests
           description: All integration tests passed
-          target_url: ${{ steps.obtain-branch-name.outputs.branch_name }}
+          target_url: ${{ github.event.issue.pull_request.url }}
 
