@@ -36,7 +36,7 @@ jobs:
             build_tool: cargo
           - target: x86_64-unknown-linux-gnu
             os: ubuntu-latest
-            build_tool: cargo
+            build_tool: cross
           - target: x86_64-apple-darwin
             os: macos-latest
             build_tool: cargo
@@ -44,29 +44,15 @@ jobs:
     steps: 
       - uses: actions/checkout@v3
 
-      - name: Edit Cross.toml
-        runs-on: ubuntu-latest
-        if: ${{ matrix.os }} == "ubuntu-latest" && ${{ matrix.build_tool }} == "cross"
-        uses: ciiiii/toml-editor@1.0.0
-        with:
-          file: ${{ github.workspace }}/Cross.toml
-          key: "build.env.passthrough"
-          value: "[GIT_TAG=$GIT_TAG, GIT_COMMIT=$GIT_COMMIT]"
-
-      - uses: pCYSl5EDgo/cat@master
-        id: toml
-        with:
-          path: Cross.toml
-
-      - run: echo $TEXT
-        env:
-          TEXT: ${{ steps.toml.outputs.text }}
-
       - name: Setup | Rust
         if: ${{ matrix.target }} == "aarch64-apple-darwin"
         uses: ATiltedTree/setup-rust@v1
         with:
           rust-version: stable
+
+      - name: Create Cross.toml
+        if: ${{ matrix.build_tool }} == "cross"
+        run: bash ./generate_cross_toml.sh $GIT_TAG $GIT_COMMIT
       
       - name: install target to aarch64-apple-darwin
         if: ${{ matrix.target }} == "aarch64-apple-darwin"
