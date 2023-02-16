@@ -62,11 +62,10 @@ jobs:
         with:
           # (required) Comma-separated list of binary names (non-extension portion of filename) to build and upload.
           # Note that glob pattern is not supported yet.
-          bin: bifrost_cli
+          bin: rust_release_action_test
           # (optional) Target triple, default is host triple.
           target: ${{ matrix.target }}
           # (optional) Tool to build binaries (cargo, or cross)
           build_tool: ${{ matrix.build_tool }}
           # (required) GitHub token for uploading assets to GitHub Releases.
           token: ${{ secrets.GITHUB_TOKEN }}
-          archive: bifrost-$target
