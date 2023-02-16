@@ -25,21 +25,47 @@ jobs:
         include:
           - target: aarch64-unknown-linux-gnu
             os: ubuntu-latest
+            build_tool: cross
           - target: aarch64-apple-darwin
             os: macos-latest
+            build_tool: cargo
           - target: x86_64-unknown-linux-gnu
             os: ubuntu-latest
+            build_tool: cargo
           - target: x86_64-apple-darwin
             os: macos-latest
+            build_tool: cargo
     runs-on: ${{ matrix.os }}
     steps: 
-      - uses: actions/checkout@v3      
+      - uses: actions/checkout@v3
+
+      - name: Edit Cross.toml
+        if: ${{ matrix.os }} == "ubuntu-latest" && ${{ matrix.build_tool }} == "cross"
+        uses: ciiiii/toml-editor@1.0.0
+        with:
+          file: ${{ github.workspace }}/Cross.toml
+          key: "build.env.passthrough"
+          value: "[GIT_TAG=$GIT_TAG, GIT_COMMIT=$GIT_COMMIT]"
+
+      - name: Setup | Rust
+        if: ${{ matrix.target }} == "aarch64-apple-darwin"
+        uses: ATiltedTree/setup-rust@v1
+        with:
+          rust-version: stable
+      
+      - name: install target to aarch64-apple-darwin
+        if: ${{ matrix.target }} == "aarch64-apple-darwin"
+        run: "rustup target add aarch64-apple-darwin"
+      
       - uses: taiki-e/upload-rust-binary-action@v1
         with:
           # (required) Comma-separated list of binary names (non-extension portion of filename) to build and upload.
           # Note that glob pattern is not supported yet.
-          bin: rust_release_action_test
+          bin: bifrost_cli
           # (optional) Target triple, default is host triple.
           target: ${{ matrix.target }}
+          # (optional) Tool to build binaries (cargo, or cross)
+          build_tool: ${{ matrix.build_tool }}
           # (required) GitHub token for uploading assets to GitHub Releases.
           token: ${{ secrets.GITHUB_TOKEN }}
+          archive: bifrost-$target
